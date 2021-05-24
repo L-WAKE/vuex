@@ -1,8 +1,11 @@
 <template>
   <div id="app">
-    <a-input placeholder="请输入任务" class="my_ipt" :value="inputValue" @change="handleInputChange" />
-    <a-button type="primary" @click="addItemToList">添加事项</a-button>
-
+    <div class="frist">
+      <a-input placeholder="请输入任务" class="my_ipt" :value="inputValue" @change="handleInputChange" />
+      <a-button type="primary" @click="addItemToList">添加事项</a-button>
+      <a-input placeholder="请输入关键字" class="my_ipt ml" :value="findVal" @change="hanldFind" />
+      <a-button type="danger" @click="findToList">查询</a-button>
+    </div>
     <a-list bordered :dataSource="infolist" class="dt_list">
       <a-list-item slot="renderItem" slot-scope="item">
         <!-- 复选框 -->
@@ -22,7 +25,6 @@
       >
         <a-textarea :value="editValue" @change="handleTarea" :rows="4" />
       </a-modal>
-
       <!-- 编辑弹窗 end -->
 
       <!-- footer区域 -->
@@ -60,7 +62,7 @@ export default {
     this.$store.dispatch('getList')
   },
   computed: {
-    ...mapState(['inputValue', 'viewKey', 'visible', 'editValue']),
+    ...mapState(['inputValue', 'viewKey', 'visible', 'editValue', 'findVal']),
     ...mapGetters(['unDoneLength', 'infolist'])
   },
   methods: {
@@ -72,12 +74,17 @@ export default {
     handleTarea(e) {
       this.$store.commit('setTareaVal', e.target.value)
     },
+    findToList() {
+      console.log(this.findVal)
+    },
+    hanldFind(e) {
+      this.$store.commit('setFindVal', e.target.value)
+    },
     // 向列表中新增 item 项
     addItemToList() {
       if (this.inputValue.trim().length <= 0) {
         return this.$message.warning('文本框内容不能为空！')
       }
-
       this.$store.commit('addItem')
     },
     // 编辑
@@ -107,7 +114,6 @@ export default {
     },
     // 修改页面上展示的列表数据
     changeList(key) {
-      // console.log(key)
       this.$store.commit('changeViewKey', key)
     }
   }
@@ -119,20 +125,27 @@ export default {
   padding: 10px;
 }
 ::v-deep .ant-checkbox-wrapper {
-  max-width: 600px;
+  max-width: 800px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-
+.frist {
+  display: flex;
+  align-content: center;
+  justify-content: center;
+}
+.ml {
+  margin-left: 50px;
+}
 .my_ipt {
-  width: 500px;
+  width: 390px;
   margin-right: 10px;
 }
 
 .dt_list {
-  width: 500px;
-  margin-top: 10px;
+  max-width: 1000px;
+  margin: 10px auto;
 }
 
 .footer {

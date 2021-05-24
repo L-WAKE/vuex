@@ -15,9 +15,13 @@ export default new Vuex.Store({
     viewKey: 'all',
     visible: false,
     editValue: '',
-    nowId: ''
+    nowId: '',
+    findVal: '111'
   },
   mutations: {
+    setFindVal(state, val) {
+      state.findVal = val
+    },
     editItemById(state, id) {
       state.nowId = id
       const i = state.list.findIndex(x => x.id === id)
@@ -55,7 +59,6 @@ export default new Vuex.Store({
     },
     // 根据Id删除对应的任务事项
     removeItem(state, id) {
-      // 根据Id查找对应项的索引
       const i = state.list.findIndex(x => x.id === id)
       // 根据索引，删除对应的元素
       if (i !== -1) state.list.splice(i, 1)

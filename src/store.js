@@ -14,20 +14,23 @@ export default new Vuex.Store({
     nextId: 5,
     viewKey: 'all',
     visible: false,
-    editValue: ''
+    editValue: '',
+    nowId: ''
   },
   mutations: {
     editItemById(state, id) {
+      state.nowId = id
       const i = state.list.findIndex(x => x.id === id)
-      i !== -1 ? state.editValue = state.list[i].info : ''
+      if (i !== -1) state.editValue = state.list[i].info
       state.visible = true
     },
     handleCancel(state) {
       state.visible = false
     },
-    handleOk(state, id) {
+    handleOk(state) {
+      const i = state.list.findIndex(x => x.id === state.nowId)
+      if (i !== -1) state.list[i].info = state.editValue
       state.visible = false
-      console.log(id)
     },
     initList(state, list) {
       state.list = list
@@ -35,6 +38,9 @@ export default new Vuex.Store({
     // 为 store 中的 inputValue 赋值
     setInputValue(state, val) {
       state.inputValue = val
+    },
+    setTareaVal(state, val) {
+      state.editValue = val
     },
     // 添加列表项
     addItem(state) {
@@ -52,12 +58,12 @@ export default new Vuex.Store({
       // 根据Id查找对应项的索引
       const i = state.list.findIndex(x => x.id === id)
       // 根据索引，删除对应的元素
-      i !== -1 ? state.list.splice(i, 1) : ''
+      if (i !== -1) state.list.splice(i, 1)
     },
     // 修改列表项的选中状态
     changeStatus(state, param) {
       const i = state.list.findIndex(x => x.id === param.id)
-      i !== -1 ? state.list[i].done = param.status : ''
+      if (i !== -1) state.list[i].done = param.status
     },
     // 清除已完成的任务
     cleanDone(state) {
@@ -71,7 +77,6 @@ export default new Vuex.Store({
   actions: {
     getList(context) {
       axios.get('/list.json').then(({ data }) => {
-        // console.log(data)
         context.commit('initList', data)
       })
     }

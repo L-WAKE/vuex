@@ -20,7 +20,7 @@
         @ok="handleOk"
         @cancel="handleCancel"
       >
-        <a-textarea :value="editValue" :rows="4" />
+        <a-textarea :value="editValue" @change="handleTarea" :rows="4" />
       </a-modal>
 
       <!-- 编辑弹窗 end -->
@@ -68,6 +68,9 @@ export default {
     // 监听文本框内容变化
     handleInputChange(e) {
       this.$store.commit('setInputValue', e.target.value)
+    },
+    handleTarea(e) {
+      this.$store.commit('setTareaVal', e.target.value)
     },
     // 向列表中新增 item 项
     addItemToList() {

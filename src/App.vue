@@ -2,7 +2,7 @@
   <div id="app">
     <div class="frist">
       <a-input placeholder="请输入任务" class="my_ipt" :value="inputValue" @change="handleInputChange" />
-      <a-button type="primary" @click="addItemToList">添加事项</a-button>
+      <a-button type="primary" @click="addItemToList">添加任务</a-button>
       <a-input placeholder="请输入关键字" class="my_ipt ml" :value="findVal" @change="hanldFind" />
       <a-button type="danger" @click="findToList">查询</a-button>
     </div>
@@ -14,6 +14,7 @@
         <a slot="actions" @click="editItemById(item.id)">编辑</a>
         <a slot="actions" @click="removeItemById(item.id)">删除</a>
       </a-list-item>
+      <!-- <a-empty /> -->
       <!-- 编辑弹窗 start -->
       <a-modal
         v-model="visible"
@@ -66,16 +67,13 @@ export default {
     ...mapGetters(['unDoneLength', 'infolist'])
   },
   methods: {
-    ...mapMutations(['handleOk', 'handleCancel']),
+    ...mapMutations(['handleOk', 'handleCancel', 'findToList']),
     // 监听文本框内容变化
     handleInputChange(e) {
       this.$store.commit('setInputValue', e.target.value)
     },
     handleTarea(e) {
       this.$store.commit('setTareaVal', e.target.value)
-    },
-    findToList() {
-      console.log(this.findVal)
     },
     hanldFind(e) {
       this.$store.commit('setFindVal', e.target.value)

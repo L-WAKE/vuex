@@ -1,9 +1,19 @@
 <template>
   <div id="app">
     <div class="frist">
-      <a-input placeholder="请输入任务" class="my_ipt" :value="inputValue" @change="handleInputChange" />
+      <a-input
+        placeholder="请输入任务"
+        class="my_ipt"
+        :value="inputValue"
+        @change="e=>{setInputValue(e.target.value)}"
+      />
       <a-button type="primary" @click="addItemToList">添加任务</a-button>
-      <a-input placeholder="请输入关键字" class="my_ipt ml" :value="findVal" @change="hanldFind" />
+      <a-input
+        placeholder="请输入关键字"
+        class="my_ipt ml"
+        :value="findVal"
+        @change="e=>{setFindVal(e.target.value)}"
+      />
       <a-button type="danger" @click="findToList">查询</a-button>
     </div>
     <a-list bordered :dataSource="infolist" class="dt_list">
@@ -12,7 +22,7 @@
         <a-checkbox :checked="item.done" @change="e => {cbStatusChanged(e, item.id)}">{{item.info}}</a-checkbox>
         <!-- 编辑、删除链接 -->
         <a slot="actions" @click="editItemById(item.id)">编辑</a>
-        <a slot="actions" @click="removeItemById(item.id)">删除</a>
+        <a slot="actions" @click="removeItem(item.id)">删除</a>
       </a-list-item>
       <!-- <a-empty /> -->
       <!-- 编辑弹窗 start -->
@@ -24,7 +34,7 @@
         @ok="handleOk"
         @cancel="handleCancel"
       >
-        <a-textarea :value="editValue" @change="handleTarea" :rows="4" />
+        <a-textarea :value="editValue" @change="e=>{setTareaVal(e.target.value)}" :rows="4" />
       </a-modal>
       <!-- 编辑弹窗 end -->
 
@@ -34,18 +44,20 @@
         <span>{{unDoneLength}}条剩余</span>
         <!-- 操作按钮 -->
         <a-button-group>
-          <a-button :type="viewKey === 'all' ? 'primary' : 'default'" @click="changeList('all')">全部</a-button>
+          <a-button
+            :type="viewKey === 'all' ? 'primary' : 'default'"
+            @click="changeViewKey('all')"
+          >全部</a-button>
           <a-button
             :type="viewKey === 'undone' ? 'primary' : 'default'"
-            @click="changeList('undone')"
+            @click="changeViewKey('undone')"
           >未完成</a-button>
           <a-button
             :type="viewKey === 'done' ? 'primary' : 'default'"
-            @click="changeList('done')"
+            @click="changeViewKey('done')"
           >已完成</a-button>
         </a-button-group>
-        <!-- 把已经完成的任务清空 -->
-        <a @click="clean">清除已完成</a>
+        <a @click="cleanDone">清除已完成</a>
       </div>
     </a-list>
   </div>
@@ -67,17 +79,18 @@ export default {
     ...mapGetters(['unDoneLength', 'infolist'])
   },
   methods: {
-    ...mapMutations(['handleOk', 'handleCancel', 'findToList']),
-    // 监听文本框内容变化
-    handleInputChange(e) {
-      this.$store.commit('setInputValue', e.target.value)
-    },
-    handleTarea(e) {
-      this.$store.commit('setTareaVal', e.target.value)
-    },
-    hanldFind(e) {
-      this.$store.commit('setFindVal', e.target.value)
-    },
+    ...mapMutations([
+      'handleOk',
+      'handleCancel',
+      'findToList',
+      'removeItem',
+      'editItemById',
+      'cleanDone',
+      'changeViewKey',
+      'setInputValue',
+      'setTareaVal',
+      'setFindVal'
+    ]),
     // 向列表中新增 item 项
     addItemToList() {
       if (this.inputValue.trim().length <= 0) {
@@ -85,34 +98,13 @@ export default {
       }
       this.$store.commit('addItem')
     },
-    // 编辑
-    editItemById(id) {
-      this.$store.commit('editItemById', id)
-    },
-    // 很据Id删除对应的任务事项
-    removeItemById(id) {
-      // console.log(id)
-      this.$store.commit('removeItem', id)
-    },
     // 监听复选框选中状态变化的事件
     cbStatusChanged(e, id) {
-      // 通过 e.target.checked 可以接受到最新的选中状态
-      console.log(e.target.checked)
-      console.log(id)
       const param = {
         id: id,
         status: e.target.checked
       }
-
       this.$store.commit('changeStatus', param)
-    },
-    // 清除已完成的任务
-    clean() {
-      this.$store.commit('cleanDone')
-    },
-    // 修改页面上展示的列表数据
-    changeList(key) {
-      this.$store.commit('changeViewKey', key)
     }
   }
 }
@@ -140,12 +132,10 @@ export default {
   width: 390px;
   margin-right: 10px;
 }
-
 .dt_list {
   max-width: 1000px;
   margin: 10px auto;
 }
-
 .footer {
   display: flex;
   justify-content: space-between;

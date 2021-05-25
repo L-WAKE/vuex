@@ -6,12 +6,9 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    // 所有的任务列表
-    list: [],
-    // 文本框的内容
-    inputValue: '',
-    // 下一个Id
-    nextId: 5,
+    list: [],// 所有的任务列表
+    inputValue: '',// 文本框的内容
+    nextId: 5,// 下一数据的Id
     viewKey: 'all',
     visible: false,
     editValue: '',
@@ -20,18 +17,7 @@ export default new Vuex.Store({
   },
   mutations: {
     findToList(state) {
-      // state.list = state.list.filter(item => item.info.indexOf(state.findVal) !== -1)
-
-      let newArr = []
-      let oldList = JSON.parse(JSON.stringify(state.list))
-      oldList.forEach(item => {
-        if (item.info && item.info.indexOf(state.findVal) !== -1) newArr.push(item)
-      })
-      if (newArr.length) {
-        state.list = newArr
-      } else {
-        alert("没有找到相关数据")
-      }
+      state.list = state.list.filter(item => item.info.indexOf(state.findVal) !== -1)
     },
     setFindVal(state, val) {
       state.findVal = val
